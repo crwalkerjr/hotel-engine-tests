@@ -3,10 +3,10 @@ import geckodriver_autoinstaller
 import pytest
 import requests
 import time
+from LicensePage import LicensePage
+from RepoPage import RepoPage
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 
 # Install webdrivers
 geckodriver_autoinstaller.install()
@@ -16,7 +16,10 @@ chromedriver_autoinstaller.install()
 # HELPER FUNCTIONS
 
 def get_repo(query):
-    """
+    """ Utility function to query Github's search api and return the given repo's url
+    
+    :param: query: string of repo to be queried
+    :return: string of queried repo's url
     """
     github_search_api = "https://api.github.com/search/repositories"
     query_param = "?q="
@@ -26,15 +29,6 @@ def get_repo(query):
 
     payload = response.json()
     return payload['items'][0]['html_url']
-
-
-def parse_license(list_of_rows):
-    """
-    """
-    license_text = """"""
-    for text in [row.text for row in list_of_rows]:
-        license_text += f"{text}\n"
-    return license_text.rstrip("\n")   # remove final newline
 
 
 # TESTS
@@ -58,29 +52,27 @@ def parse_license(list_of_rows):
             id="firefox")
     ])
 def test_repo_contents(driver, query, expected_about_text, expected_license_filename):
-    """
+    """ Test to verify the "About" text and license of a GitHub repository
+
+    :param: driver: Selenium WebDriver browser
+    :param: query: GitHub repo to be queried
+    :param: expected_about_text: string of expected About text
+    :param: expected_license_filename: string for filename containing expected licesnse text
     """
     repo_url = get_repo(query)
     driver.implicitly_wait(5)
     driver.get(repo_url)
+    repo_page = RepoPage(driver)
 
-    sidebar = driver.find_element(By.CLASS_NAME, "Layout-sidebar")
+    assert repo_page.about.text == expected_about_text
 
-    about = sidebar.find_element(By.CSS_SELECTOR, "p.f4.my-3")
-    assert about.text == expected_about_text
+    repo_page.license_link.click() 
 
-    license = sidebar.find_elements(By.CSS_SELECTOR, "a.Link--muted")[1]
-
-    license.click() 
-
-    license_file_list_of_rows = driver.find_elements(By.CLASS_NAME, "blob-code.blob-code-inner.js-file-line")
-
-    license_text = parse_license(license_file_list_of_rows)
+    license_page = LicensePage(driver)
 
     with open(expected_license_filename) as f:
         expected_license = f.read()
-        assert license_text == expected_license
-
+        assert license_page.license_text == expected_license
 
     driver.close()
 
