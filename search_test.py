@@ -3,8 +3,8 @@ import geckodriver_autoinstaller
 import pytest
 import requests
 import time
-from LicensePage import LicensePage
-from RepoPage import RepoPage
+from pages.LicensePage import LicensePage
+from pages.RepoPage import RepoPage
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
