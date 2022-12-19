@@ -1,6 +1,10 @@
 from selenium.webdriver.common.by import By
 
 class RepoPage(object):
+    """ RepoPage Page Object to manage elements from repository homepage
+
+    :param: driver: Browser as a selenium webdriver    
+    """
     def __init__(self, driver):
         self.driver = driver
         self.sidebar = driver.find_element(By.CLASS_NAME, "Layout-sidebar")

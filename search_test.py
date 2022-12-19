@@ -75,4 +75,3 @@ def test_repo_contents(driver, query, expected_about_text, expected_license_file
         assert license_page.license_text == expected_license
 
     driver.close()
-

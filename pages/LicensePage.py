@@ -1,6 +1,11 @@
 from selenium.webdriver.common.by import By
 
 class LicensePage(object):
+    """ LicensePage Page Object to manage elements from license page
+
+    :param: driver: Browser as a selenium webdriver
+    """
+
     def __init__(self, driver):
         self.driver = driver
         self.license_text = self.parse_license_text()
